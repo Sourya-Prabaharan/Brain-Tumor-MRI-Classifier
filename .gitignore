@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Environments
+.env
+.venv/
+.uv-python/
+.local_pytools/
+venv/
+env/
+
+# Local data and trained model weights
+data/**
+!data/
+!data/brain_mri/
+!data/brain_mri/train/
+!data/brain_mri/test/
+!data/brain_mri/train/*/
+!data/brain_mri/test/*/
+!data/README.md
+!data/**/.gitkeep
+*.h5
+*.keras
+results/models/
+results_*/
+
+# Large or machine-specific experiment logs
+logs/
+wandb/
+tensorboard/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# OS/editor files
+.DS_Store
+.idea/
+.vscode/

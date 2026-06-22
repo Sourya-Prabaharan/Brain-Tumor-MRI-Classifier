@@ -253,7 +253,7 @@ The `results/` directory contains generated assets used in the README:
 - Evaluate robustness across scanner types, image orientations, and external datasets.
 - Add segmentation-based analysis if tumor masks become available.
 
-## Resume-Ready Summary
+## Summary
 
 - Developed a TensorFlow/Keras deep learning pipeline for four-class brain tumor MRI classification using real Kaggle MRI data.
 - Improved performance with EfficientNetB0 transfer learning and image augmentation compared with a custom CNN baseline.

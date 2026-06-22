@@ -1,0 +1,4 @@
+model,accuracy,precision_weighted,recall_weighted,f1_weighted,notes
+Baseline custom CNN (short CPU checkpoint),0.268125,0.3142023346303502,0.268125,0.14006298118888885,Custom CNN baseline checkpoint evaluated after a brief local training run.
+EfficientNetB0 transfer learning,0.903125,0.9088714678262403,0.903125,0.9002370569814273,Best completed real-data model at 160px with augmentation and fine-tuning.
+EfficientNetB0 224px checkpoint,0.89875,0.9041335634332573,0.89875,0.8959947549475231,Best frozen-backbone checkpoint from the 224px experiment.

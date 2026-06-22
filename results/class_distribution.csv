@@ -1,0 +1,13 @@
+split,class,count
+train,glioma,1050
+train,meningioma,1012
+train,pituitary,1098
+train,no_tumor,985
+validation,glioma,185
+validation,meningioma,178
+validation,pituitary,194
+validation,no_tumor,174
+test,glioma,300
+test,meningioma,306
+test,pituitary,300
+test,no_tumor,300

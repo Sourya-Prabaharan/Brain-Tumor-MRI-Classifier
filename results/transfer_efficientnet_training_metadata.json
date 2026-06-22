@@ -1,0 +1,18 @@
+{
+  "model": "transfer",
+  "backbone": "efficientnet",
+  "classes": [
+    "glioma",
+    "meningioma",
+    "pituitary",
+    "no_tumor"
+  ],
+  "image_size": 160,
+  "batch_size": 32,
+  "epochs_trained": 8,
+  "train_images": 4760,
+  "validation_images": 840,
+  "test_images": 1600,
+  "model_path": "results/models/transfer_efficientnet.keras",
+  "history_path": "results/transfer_efficientnet_history.csv"
+}

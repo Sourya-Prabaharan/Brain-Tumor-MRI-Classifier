@@ -32,3 +32,7 @@ python3 src/dataset.py --generate-demo --train-samples 40 --test-samples 10
 
 Synthetic images are only for checking that the pipeline runs. They should not be
 reported as medical model performance.
+
+## Preparing the recorded dataset source
+
+Download `masoudnickparvar/brain-tumor-mri-dataset` from Kaggle under its applicable terms. Extract it outside this repository, then copy `Training/` to `data/brain_mri/train/` and `Testing/` to `data/brain_mri/test/`. Rename each `notumor/` class folder to `no_tumor/`. Keep the original test split separate; do not mix it into training. Check actual class counts before comparing with the saved experiment. The original subset manifest is not available, so an exact recreation of its balanced 1,600-image evaluation cannot be guaranteed.

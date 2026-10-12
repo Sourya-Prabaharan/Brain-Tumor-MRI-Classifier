@@ -13,7 +13,7 @@ It compares a custom CNN baseline with EfficientNetB0 transfer learning, evaluat
 
 ## Motivation
 
-Brain MRI classification is a useful machine learning project because the classes are visually meaningful, some categories overlap, and accuracy alone does not tell the full story. The goal of this repository is to show a clean end-to-end workflow that a strong computer science or data science student could realistically build:
+Brain MRI classification is a useful machine learning project because the classes are visually meaningful, some categories overlap, and accuracy alone does not tell the full story. The repository implements this workflow:
 
 - Load and validate a real image dataset.
 - Build a reproducible training pipeline.
@@ -24,7 +24,7 @@ Brain MRI classification is a useful machine learning project because the classe
 ## Repository Structure
 
 ```text
-Brain-Tumor-Detector-and-Classifier/
+Brain-Tumor-MRI-Classifier/
 ├── data/
 │   └── README.md
 ├── notebooks/
@@ -52,7 +52,7 @@ Brain-Tumor-Detector-and-Classifier/
 └── .gitignore
 ```
 
-The `data/` directory is intentionally ignored by git so the repository does not commit large medical image files. Trained model checkpoints are also ignored.
+The `data/` directory is intentionally ignored by git so the repository does not commit large medical image files. Trained model checkpoints are also ignored and are **not distributed in this repository**. Training must produce a checkpoint before evaluation, prediction, or Grad-CAM commands can run. Saved plots and metrics can be inspected without retraining.
 
 ## Dataset
 
@@ -72,7 +72,7 @@ data/brain_mri/
     no_tumor/
 ```
 
-The training folder is split into train and validation sets using a stratified split. The held-out test folder is used only for final evaluation.
+See [dataset preparation](data/README.md) before running training. The training folder is split into train and validation sets using a stratified split. The following counts describe the saved experiment; they are not a guarantee of the contents of a fresh Kaggle download. The repository does not include a file manifest proving the original split or patient-level separation.
 
 | Split | Glioma | Meningioma | Pituitary | No Tumor | Total |
 |---|---:|---:|---:|---:|---:|
@@ -80,22 +80,29 @@ The training folder is split into train and validation sets using a stratified s
 | Validation | 210 | 210 | 210 | 210 | 840 |
 | Test | 400 | 400 | 400 | 400 | 1,600 |
 
-![Class distribution](/Users/sourya/Brain-Tumor-Detector-and-Classifier/results/class_distribution.png)
+![Class distribution](results/class_distribution.png)
 
 ## Methodology
 
-The data pipeline in [src/dataset.py](/Users/sourya/Brain-Tumor-Detector-and-Classifier/src/dataset.py) handles folder validation, stratified splitting, image resizing, normalization, batching, and data augmentation.
+The data pipeline in [src/dataset.py](src/dataset.py) handles folder validation, stratified splitting, image resizing, normalization, batching, and data augmentation.
 
 Training images are resized to the configured input size, normalized to `[0, 1]`, and augmented with lightweight image transformations. Augmentation is used only during training, not validation or testing.
 
-The model code lives in [src/models.py](/Users/sourya/Brain-Tumor-Detector-and-Classifier/src/models.py). Two model families are implemented:
+The model code lives in [src/models.py](src/models.py). Two model families are implemented:
 
 - Baseline custom CNN: convolution blocks with batch normalization, max pooling, dropout, global average pooling, and dense classification layers.
 - EfficientNetB0 transfer learning: ImageNet-pretrained EfficientNetB0 backbone with a task-specific classification head and optional fine-tuning.
 
-![Architecture diagram](/Users/sourya/Brain-Tumor-Detector-and-Classifier/results/architecture_diagram.png)
+![Architecture diagram](results/architecture_diagram.png)
 
 ## Training
+
+Prerequisites: Python 3.10–3.12 and a TensorFlow-compatible platform. Start from the repository root:
+
+```bash
+git clone https://github.com/Sourya-Prabaharan/Brain-Tumor-MRI-Classifier.git
+cd Brain-Tumor-MRI-Classifier
+```
 
 Install dependencies:
 
@@ -133,7 +140,7 @@ python src/train.py --model transfer --backbone efficientnet --image-size 224 --
 
 Training produces model checkpoints, history CSV files, and training curves in `results/`.
 
-![Training curves](/Users/sourya/Brain-Tumor-Detector-and-Classifier/results/training_curves.png)
+![Training curves](results/training_curves.png)
 
 ## Evaluation
 
@@ -143,11 +150,11 @@ Evaluate a trained model:
 python src/evaluate.py --model-path results/models/transfer_efficientnet.keras --image-size 160
 ```
 
-The evaluation script in [src/evaluate.py](/Users/sourya/Brain-Tumor-Detector-and-Classifier/src/evaluate.py) reports accuracy, weighted precision, weighted recall, weighted F1 score, classification report, confusion matrix, sample predictions, and misclassified examples.
+The evaluation script in [src/evaluate.py](src/evaluate.py) reports accuracy, weighted precision, weighted recall, weighted F1 score, classification report, confusion matrix, sample predictions, and misclassified examples.
 
 ## Model Comparison
 
-These are measured results on the real held-out Kaggle test split. The best completed run reached 90.31% accuracy, not 96%. The project keeps the reported numbers honest rather than inflating them.
+The saved EfficientNetB0 evaluation reports **90.31% accuracy on 1,600 images** and weighted F1 of **0.9002**. See the [per-class metrics and sample counts](results/transfer_efficientnet_evaluation_metrics.json). The other runs are recorded in the experiment table; they have different training budgets and are not a controlled architecture comparison. These are existing artifacts, not newly reproduced experiments.
 
 | Model | Accuracy | Precision | Recall | F1 |
 |---|---:|---:|---:|---:|
@@ -155,9 +162,9 @@ These are measured results on the real held-out Kaggle test split. The best comp
 | EfficientNetB0 transfer learning | 0.9031 | 0.9089 | 0.9031 | 0.9002 |
 | EfficientNetB0 224px checkpoint | 0.8988 | 0.9041 | 0.8988 | 0.8960 |
 
-The full table is saved in [results/experiment_results.md](/Users/sourya/Brain-Tumor-Detector-and-Classifier/results/experiment_results.md).
+The full table is saved in [results/experiment_results.md](results/experiment_results.md).
 
-![Confusion matrix](/Users/sourya/Brain-Tumor-Detector-and-Classifier/results/confusion_matrix.png)
+![Confusion matrix](results/confusion_matrix.png)
 
 ## Final Results
 
@@ -172,7 +179,7 @@ The strongest completed model is the EfficientNetB0 transfer-learning run at 160
 
 Pituitary and no-tumor images performed best, while glioma had noticeably lower recall. This is important because a model can have a strong overall accuracy while still missing a clinically important subset of cases.
 
-![Sample predictions](/Users/sourya/Brain-Tumor-Detector-and-Classifier/results/sample_predictions.png)
+![Sample predictions](results/sample_predictions.png)
 
 ## Prediction
 
@@ -184,7 +191,7 @@ python src/predict.py --image path/to/image.jpg --model path/to/model.keras
 
 The script prints the predicted class, confidence score, and probabilities for all four classes.
 
-Example verified output:
+Previously recorded example output (not independently reproduced without the checkpoint):
 
 ```text
 Predicted class: pituitary
@@ -196,11 +203,11 @@ Class probabilities:
   no_tumor    : 0.0004
 ```
 
-The prediction script is implemented in [src/predict.py](/Users/sourya/Brain-Tumor-Detector-and-Classifier/src/predict.py) and also saves a Grad-CAM visualization for the image.
+The prediction script is implemented in [src/predict.py](src/predict.py) and also saves a Grad-CAM visualization for the image.
 
 ## Grad-CAM
 
-Grad-CAM is implemented in [src/gradcam.py](/Users/sourya/Brain-Tumor-Detector-and-Classifier/src/gradcam.py). It highlights image regions that influenced the predicted class and helps inspect whether the model is focusing on plausible MRI regions instead of scanner artifacts, borders, or labels.
+Grad-CAM is implemented in [src/gradcam.py](src/gradcam.py). It highlights image regions that influenced the predicted class and helps inspect whether the model is focusing on plausible MRI regions instead of scanner artifacts, borders, or labels.
 
 Generate Grad-CAM examples:
 
@@ -210,7 +217,7 @@ python src/gradcam.py --model-path results/models/transfer_efficientnet.keras --
 
 Grad-CAM is an interpretability tool, not a medical explanation and not a diagnosis.
 
-![Grad-CAM examples](/Users/sourya/Brain-Tumor-Detector-and-Classifier/results/gradcam_examples.png)
+![Grad-CAM examples](results/gradcam_examples.png)
 
 ## Error Analysis
 
@@ -222,19 +229,19 @@ Accuracy alone is not enough for medical imaging because different mistakes have
 
 Possible dataset limitations include duplicate or near-duplicate images, inconsistent scanner settings, preprocessing artifacts, image-level labels without tumor masks, and a test set that may not represent real clinical deployment conditions.
 
-![Misclassified examples](/Users/sourya/Brain-Tumor-Detector-and-Classifier/results/misclassifications.png)
+![Misclassified examples](results/misclassifications.png)
 
 ## Visual Assets
 
 The `results/` directory contains generated assets used in the README:
 
-- [Class distribution chart](/Users/sourya/Brain-Tumor-Detector-and-Classifier/results/class_distribution.png)
-- [Architecture diagram](/Users/sourya/Brain-Tumor-Detector-and-Classifier/results/architecture_diagram.png)
-- [Training curves](/Users/sourya/Brain-Tumor-Detector-and-Classifier/results/training_curves.png)
-- [Confusion matrix](/Users/sourya/Brain-Tumor-Detector-and-Classifier/results/confusion_matrix.png)
-- [Sample prediction grid](/Users/sourya/Brain-Tumor-Detector-and-Classifier/results/sample_predictions.png)
-- [Grad-CAM examples](/Users/sourya/Brain-Tumor-Detector-and-Classifier/results/gradcam_examples.png)
-- [Misclassified examples](/Users/sourya/Brain-Tumor-Detector-and-Classifier/results/misclassifications.png)
+- [Class distribution chart](results/class_distribution.png)
+- [Architecture diagram](results/architecture_diagram.png)
+- [Training curves](results/training_curves.png)
+- [Confusion matrix](results/confusion_matrix.png)
+- [Sample prediction grid](results/sample_predictions.png)
+- [Grad-CAM examples](results/gradcam_examples.png)
+- [Misclassified examples](results/misclassifications.png)
 
 ## Limitations
 
